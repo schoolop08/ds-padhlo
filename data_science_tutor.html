@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DataSci Dojo 🥋 — Learn Data Science</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #0f0f1a;
+    --bg3: #141425;
+    --card: #16162a;
+    --card2: #1c1c35;
+    --border: #2a2a4a;
+    --accent1: #7c6aff;
+    --accent2: #ff6b9d;
+    --accent3: #00e5a0;
+    --accent4: #ffd166;
+    --accent5: #06c8ff;
+    --text: #e8e8f0;
+    --text2: #9898b8;
+    --text3: #6060a0;
+    --code-bg: #0d0d20;
+    --glow1: rgba(124,106,255,0.15);
+    --glow2: rgba(255,107,157,0.12);
+    --glow3: rgba(0,229,160,0.12);
+    --glow4: rgba(255,209,102,0.12);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg2); }
+  ::-webkit-scrollbar-thumb { background: var(--accent1); border-radius: 3px; }
+
+  /* ── HEADER ── */
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 1.2rem;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, var(--accent1), var(--accent5));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .logo span { -webkit-text-fill-color: var(--accent3); }
+  nav { display: flex; gap: 0.25rem; }
+  .nav-btn {
+    background: none; border: 1px solid transparent;
+    color: var(--text2); font-family: 'Space Mono', monospace;
+    font-size: 0.7rem; padding: 0.35rem 0.75rem;
+    border-radius: 6px; cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+  }
+  .nav-btn:hover, .nav-btn.active {
+    background: var(--card); border-color: var(--border);
+    color: var(--text);
+  }
+  .nav-btn.active { border-color: var(--accent1); color: var(--accent1); }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 90vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    padding: 4rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-orbs {
+    position: absolute; inset: 0; pointer-events: none;
+  }
+  .orb {
+    position: absolute; border-radius: 50%;
+    filter: blur(80px); opacity: 0.35;
+    animation: float 8s ease-in-out infinite;
+  }
+  .orb1 { width: 400px; height: 400px; background: var(--accent1); top: -100px; left: -100px; animation-delay: 0s; }
+  .orb2 { width: 300px; height: 300px; background: var(--accent2); bottom: -50px; right: 0; animation-delay: -3s; }
+  .orb3 { width: 250px; height: 250px; background: var(--accent3); top: 50%; left: 50%; transform: translate(-50%,-50%); animation-delay: -5s; }
+
+  @keyframes float {
+    0%,100% { transform: translate(0,0) scale(1); }
+    33% { transform: translate(20px,-20px) scale(1.05); }
+    66% { transform: translate(-15px,10px) scale(0.95); }
+  }
+
+  .hero-badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem; letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent3);
+    background: rgba(0,229,160,0.08);
+    border: 1px solid rgba(0,229,160,0.25);
+    padding: 0.4rem 1rem; border-radius: 20px;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.6s ease both;
+  }
+  .hero-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    font-weight: 800; line-height: 1;
+    letter-spacing: -0.04em;
+    margin-bottom: 1rem;
+    animation: fadeUp 0.6s ease 0.1s both;
+  }
+  .hero-title .line2 {
+    background: linear-gradient(135deg, var(--accent1) 0%, var(--accent2) 50%, var(--accent4) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero-sub {
+    color: var(--text2); font-size: 1.1rem; max-width: 540px;
+    margin-bottom: 2.5rem;
+    animation: fadeUp 0.6s ease 0.2s both;
+  }
+  .hero-cards {
+    display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+    animation: fadeUp 0.6s ease 0.3s both;
+  }
+  .unit-pill {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 0.75rem 1.25rem;
+    cursor: pointer; transition: all 0.3s;
+    font-family: 'Syne', sans-serif; font-weight: 600;
+    font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem;
+  }
+  .unit-pill:hover { transform: translateY(-3px); border-color: var(--accent1); box-shadow: 0 8px 30px var(--glow1); }
+  .unit-pill[data-unit="1"] { --c: var(--accent1); }
+  .unit-pill[data-unit="2"] { --c: var(--accent3); }
+  .unit-pill[data-unit="3"] { --c: var(--accent2); }
+  .unit-pill[data-unit="4"] { --c: var(--accent4); }
+  .unit-pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--c); flex-shrink: 0; }
+  .unit-pill:hover { border-color: var(--c); box-shadow: 0 8px 30px rgba(124,106,255,0.2); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── MAIN CONTENT ── */
+  main { max-width: 900px; margin: 0 auto; padding: 2rem; }
+
+  /* ── UNIT SECTIONS ── */
+  .unit-section {
+    display: none;
+    animation: fadeUp 0.5s ease both;
+  }
+  .unit-section.active { display: block; }
+
+  /* ── UNIT HEADER ── */
+  .unit-header {
+    padding: 2.5rem; border-radius: 20px;
+    margin-bottom: 2rem; position: relative; overflow: hidden;
+  }
+  .unit-header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--hue-bg);
+    opacity: 0.06;
+  }
+  .unit-header-badge {
+    font-family: 'Space Mono', monospace; font-size: 0.65rem;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    opacity: 0.7; margin-bottom: 0.5rem;
+  }
+  .unit-header h1 {
+    font-family: 'Syne', sans-serif; font-size: clamp(1.8rem,5vw,2.8rem);
+    font-weight: 800; line-height: 1.1; letter-spacing: -0.03em;
+    margin-bottom: 0.75rem;
+  }
+  .unit-header .tldr {
+    background: rgba(255,255,255,0.05);
+    border-left: 3px solid;
+    border-radius: 0 10px 10px 0;
+    padding: 1rem 1.25rem;
+    font-size: 0.95rem; color: var(--text2);
+    font-style: italic;
+    margin-top: 1rem;
+  }
+  .progress-bar-wrap {
+    display: flex; align-items: center; gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  .progress-steps { display: flex; gap: 0.5rem; }
+  .pstep {
+    width: 32px; height: 4px; border-radius: 2px;
+    background: rgba(255,255,255,0.15);
+    transition: background 0.3s;
+  }
+  .pstep.done { background: currentColor; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.75rem;
+    margin-bottom: 1.5rem;
+    transition: border-color 0.3s;
+  }
+  .card:hover { border-color: rgba(124,106,255,0.3); }
+  .card-label {
+    font-family: 'Space Mono', monospace; font-size: 0.65rem;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    margin-bottom: 0.75rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .card-label::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+  .card h2 {
+    font-family: 'Syne', sans-serif; font-weight: 700;
+    font-size: 1.3rem; letter-spacing: -0.02em;
+    margin-bottom: 0.75rem;
+  }
+  .card h3 {
+    font-family: 'Syne', sans-serif; font-weight: 600;
+    font-size: 1.05rem; margin: 1.25rem 0 0.5rem;
+    color: var(--text);
+  }
+  .card p { color: var(--text2); margin-bottom: 0.75rem; }
+  .card p:last-child { margin-bottom: 0; }
+
+  /* ── ANALOGY BOX ── */
+  .analogy {
+    background: var(--bg3);
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin: 1rem 0;
+    position: relative;
+  }
+  .analogy-tag {
+    position: absolute; top: -10px; left: 1rem;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-family: 'Space Mono', monospace; font-size: 0.6rem;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0.15rem 0.6rem; color: var(--accent4);
+  }
+
+  /* ── ASCII / DIAGRAM ── */
+  .diagram {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    line-height: 1.7;
+    color: var(--accent3);
+    overflow-x: auto;
+    white-space: pre;
+    margin: 1rem 0;
+    position: relative;
+  }
+  .diagram .dim-label {
+    font-size: 0.6rem; color: var(--text3);
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+
+  /* ── CODE BLOCK ── */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin: 1rem 0;
+    overflow: hidden;
+  }
+  .code-block-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.6rem 1rem;
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid var(--border);
+  }
+  .code-block-header .dots { display: flex; gap: 5px; }
+  .code-block-header .dots span {
+    width: 10px; height: 10px; border-radius: 50%;
+  }
+  .code-block-header .dots span:nth-child(1) { background: #ff5f57; }
+  .code-block-header .dots span:nth-child(2) { background: #febc2e; }
+  .code-block-header .dots span:nth-child(3) { background: #28c840; }
+  .code-block-header .lang {
+    font-family: 'Space Mono', monospace; font-size: 0.62rem;
+    letter-spacing: 0.1em; color: var(--text3);
+  }
+  .copy-btn {
+    background: none; border: 1px solid var(--border);
+    color: var(--text3); font-family: 'Space Mono', monospace;
+    font-size: 0.6rem; padding: 0.25rem 0.6rem;
+    border-radius: 5px; cursor: pointer; transition: all 0.2s;
+  }
+  .copy-btn:hover { border-color: var(--accent3); color: var(--accent3); }
+  .code-block pre {
+    padding: 1.25rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem; line-height: 1.8;
+    overflow-x: auto;
+    color: var(--text);
+  }
+  /* Syntax highlighting */
+  .kw { color: #c792ea; } /* keywords */
+  .fn { color: #82aaff; } /* functions */
+  .str { color: #c3e88d; } /* strings */
+  .num { color: #f78c6c; } /* numbers */
+  .cm { color: #546e7a; font-style: italic; } /* comments */
+  .cls { color: #ffcb6b; } /* class names */
+
+  /* ── COMPARISON TABLE ── */
+  .table-wrap { overflow-x: auto; margin: 1rem 0; }
+  table {
+    width: 100%; border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+  th {
+    background: var(--bg3); color: var(--text);
+    font-family: 'Syne', sans-serif; font-weight: 600;
+    padding: 0.75rem 1rem; text-align: left;
+    border-bottom: 2px solid var(--border);
+    font-size: 0.8rem;
+  }
+  td {
+    padding: 0.65rem 1rem; border-bottom: 1px solid var(--border);
+    color: var(--text2); vertical-align: top;
+  }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  .tag {
+    display: inline-block;
+    padding: 0.15rem 0.5rem; border-radius: 4px;
+    font-size: 0.72rem; font-family: 'Space Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── GRID LISTS ── */
+  .concept-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr));
+    gap: 1rem; margin: 1rem 0;
+  }
+  .concept-card {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.1rem;
+    transition: all 0.25s;
+  }
+  .concept-card:hover { transform: translateY(-2px); border-color: var(--accent1); }
+  .concept-card .icon { font-size: 1.5rem; margin-bottom: 0.5rem; display: block; }
+  .concept-card h4 {
+    font-family: 'Syne', sans-serif; font-weight: 600;
+    font-size: 0.9rem; margin-bottom: 0.35rem;
+  }
+  .concept-card p { font-size: 0.8rem; color: var(--text2); margin: 0; }
+
+  /* ── QUIZ ── */
+  .quiz-card {
+    background: linear-gradient(135deg, rgba(124,106,255,0.08), rgba(255,107,157,0.05));
+    border: 1px solid rgba(124,106,255,0.3);
+    border-radius: 16px; padding: 2rem;
+    margin: 2rem 0;
+  }
+  .quiz-header {
+    font-family: 'Space Mono', monospace; font-size: 0.65rem;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--accent1); margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .quiz-header::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent1); display: inline-block; animation: pulse 1.5s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+  .quiz-q {
+    font-family: 'Syne', sans-serif; font-weight: 600;
+    font-size: 1.05rem; margin-bottom: 1.25rem;
+  }
+  .quiz-options { display: flex; flex-direction: column; gap: 0.6rem; }
+  .quiz-opt {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 0.8rem 1.1rem;
+    cursor: pointer; transition: all 0.2s;
+    font-size: 0.9rem; color: var(--text2);
+    text-align: left; display: flex; align-items: center; gap: 0.75rem;
+  }
+  .quiz-opt .opt-letter {
+    width: 24px; height: 24px; border-radius: 6px;
+    background: var(--bg3); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Mono', monospace; font-size: 0.7rem;
+    flex-shrink: 0; transition: all 0.2s;
+  }
+  .quiz-opt:hover { border-color: var(--accent1); color: var(--text); }
+  .quiz-opt:hover .opt-letter { background: var(--accent1); border-color: var(--accent1); color: #fff; }
+  .quiz-opt.correct { border-color: var(--accent3); background: rgba(0,229,160,0.08); color: var(--text); }
+  .quiz-opt.correct .opt-letter { background: var(--accent3); border-color: var(--accent3); color: #000; }
+  .quiz-opt.wrong { border-color: var(--accent2); background: rgba(255,107,157,0.08); }
+  .quiz-opt.wrong .opt-letter { background: var(--accent2); border-color: var(--accent2); color: #fff; }
+  .quiz-opt:disabled { cursor: default; }
+  .quiz-feedback {
+    margin-top: 1rem; padding: 0.85rem 1.1rem;
+    border-radius: 10px; font-size: 0.88rem;
+    display: none;
+  }
+  .quiz-feedback.correct { background: rgba(0,229,160,0.08); border: 1px solid rgba(0,229,160,0.3); color: var(--accent3); }
+  .quiz-feedback.wrong { background: rgba(255,107,157,0.08); border: 1px solid rgba(255,107,157,0.3); color: var(--accent2); }
+
+  /* ── STEP PIPELINE ── */
+  .pipeline {
+    display: flex; flex-wrap: wrap; gap: 0;
+    margin: 1.25rem 0; position: relative;
+  }
+  .pipeline-step {
+    display: flex; align-items: center; gap: 0;
+  }
+  .pstep-box {
+    background: var(--card2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 0.6rem 1rem;
+    font-size: 0.78rem; font-family: 'Syne', sans-serif;
+    font-weight: 600; white-space: nowrap;
+    cursor: default; transition: all 0.2s;
+  }
+  .pstep-box:hover { border-color: var(--step-color, var(--accent1)); background: rgba(124,106,255,0.08); transform: translateY(-2px); }
+  .pstep-arrow {
+    font-family: 'Space Mono', monospace; font-size: 0.8rem;
+    color: var(--text3); padding: 0 0.3rem;
+  }
+
+  /* ── HIGHLIGHT PILL ── */
+  .hl { 
+    display: inline-block;
+    background: rgba(124,106,255,0.12);
+    border: 1px solid rgba(124,106,255,0.25);
+    border-radius: 5px; padding: 0.1rem 0.45rem;
+    font-family: 'Space Mono', monospace; font-size: 0.78em;
+    color: var(--accent1);
+  }
+  .hl.g { background: rgba(0,229,160,0.1); border-color: rgba(0,229,160,0.2); color: var(--accent3); }
+  .hl.p { background: rgba(255,107,157,0.1); border-color: rgba(255,107,157,0.2); color: var(--accent2); }
+  .hl.y { background: rgba(255,209,102,0.1); border-color: rgba(255,209,102,0.2); color: var(--accent4); }
+  .hl.b { background: rgba(6,200,255,0.1); border-color: rgba(6,200,255,0.2); color: var(--accent5); }
+
+  /* ── UNIT NAV ── */
+  .unit-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.5rem 0; margin-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+  .unit-nav-btn {
+    background: var(--card); border: 1px solid var(--border);
+    color: var(--text2); padding: 0.6rem 1.25rem;
+    border-radius: 10px; cursor: pointer;
+    font-family: 'Syne', sans-serif; font-weight: 600;
+    font-size: 0.85rem; transition: all 0.2s;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .unit-nav-btn:hover { border-color: var(--accent1); color: var(--text); transform: translateY(-1px); }
+  .unit-nav-btn:disabled { opacity: 0.3; cursor: default; transform: none; }
+
+  /* ── SCORE BAR ── */
+  .score-wrap {
+    display: flex; align-items: center; gap: 0.75rem;
+    font-family: 'Space Mono', monospace; font-size: 0.7rem;
+    color: var(--text3);
+  }
+  .score-num { color: var(--accent3); font-size: 0.85rem; }
+
+  /* ── CALLOUT ── */
+  .callout {
+    border-radius: 10px; padding: 1rem 1.25rem;
+    margin: 0.75rem 0; display: flex; gap: 0.75rem;
+    align-items: flex-start;
+  }
+  .callout.info { background: rgba(6,200,255,0.07); border: 1px solid rgba(6,200,255,0.2); }
+  .callout.warn { background: rgba(255,209,102,0.07); border: 1px solid rgba(255,209,102,0.2); }
+  .callout.tip { background: rgba(0,229,160,0.07); border: 1px solid rgba(0,229,160,0.2); }
+  .callout-icon { font-size: 1rem; flex-shrink: 0; margin-top: 0.1rem; }
+  .callout p { margin: 0; font-size: 0.88rem; color: var(--text2); }
+  .callout strong { color: var(--text); }
+
+  /* ── SECTION DIVIDER ── */
+  .section-title {
+    font-family: 'Syne', sans-serif; font-size: 1.5rem;
+    font-weight: 800; letter-spacing: -0.02em;
+    margin: 2.5rem 0 1.25rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .section-title::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+
+  /* ── BADGE ── */
+  .badge {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    padding: 0.2rem 0.65rem; border-radius: 20px;
+    font-size: 0.72rem; font-family: 'Space Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+  .badge.purple { background: rgba(124,106,255,0.15); color: var(--accent1); }
+  .badge.green { background: rgba(0,229,160,0.1); color: var(--accent3); }
+  .badge.pink { background: rgba(255,107,157,0.1); color: var(--accent2); }
+  .badge.yellow { background: rgba(255,209,102,0.1); color: var(--accent4); }
+  .badge.blue { background: rgba(6,200,255,0.1); color: var(--accent5); }
+
+  /* ── HOME BUTTON ── */
+  .home-btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: none; border: 1px solid var(--border);
+    color: var(--text2); padding: 0.5rem 1rem;
+    border-radius: 8px; cursor: pointer;
+    font-family: 'Syne', sans-serif; font-size: 0.85rem;
+    font-weight: 600; transition: all 0.2s; margin-bottom: 1.5rem;
+  }
+  .home-btn:hover { border-color: var(--accent1); color: var(--accent1); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    nav { display: none; }
+    .concept-grid { grid-template-columns: 1fr; }
+    .hero-cards { gap: 0.5rem; }
+    .unit-pill { font-size: 0.78rem; }
+    main { padding: 1rem; }
+  }
+
+  /* ── FADE SECTIONS ── */
+  .fade-in { opacity: 0; transform: translateY(16px); transition: opacity 0.5s ease, transform 0.5s ease; }
+  .fade-in.visible { opacity: 1; transform: none; }
+
+  /* ── SCROLL INDICATOR ── */
+  .scroll-hint {
+    position: absolute; bottom: 2rem;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 0.5rem; color: var(--text3);
+    font-family: 'Space Mono', monospace; font-size: 0.62rem;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    animation: bounce 2s ease-in-out infinite;
+  }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
+
+  /* ── UNIT COLOR SCHEMES ── */
+  [data-unit-active="1"] { --ua: var(--accent1); }
+  [data-unit-active="2"] { --ua: var(--accent3); }
+  [data-unit-active="3"] { --ua: var(--accent2); }
+  [data-unit-active="4"] { --ua: var(--accent4); }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════ HEADER ══════════════════════════════ -->
+<header>
+  <div class="logo">Data<span>Sci</span>Dojo 🥋</div>
+  <nav>
+    <button class="nav-btn" onclick="showHome()">Home</button>
+    <button class="nav-btn" onclick="showUnit(1)">Unit 1</button>
+    <button class="nav-btn" onclick="showUnit(2)">Unit 2</button>
+    <button class="nav-btn" onclick="showUnit(3)">Unit 3</button>
+    <button class="nav-btn" onclick="showUnit(4)">Unit 4</button>
+  </nav>
+</header>
+
+<!-- ══════════════════════════════ HERO ══════════════════════════════ -->
+<section id="hero">
+  <div class="hero-orbs">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+  </div>
+  <div class="hero-badge">✦ Data Science for Friends ✦</div>
+  <h1 class="hero-title">
+    Learn Data Science<br>
+    <span class="line2">like a pro.</span>
+  </h1>
+  <p class="hero-sub">4 units, zero boring lectures. Pick a unit and let's get into it — your smart older sibling style. 🚀</p>
+  <div class="hero-cards">
+    <div class="unit-pill" data-unit="1" onclick="showUnit(1)">
+      <span class="dot"></span> Unit 1 · Data Preprocessing
+    </div>
+    <div class="unit-pill" data-unit="2" onclick="showUnit(2)">
+      <span class="dot"></span> Unit 2 · NumPy & Pandas
+    </div>
+    <div class="unit-pill" data-unit="3" onclick="showUnit(3)">
+      <span class="dot"></span> Unit 3 · Data Visualization
+    </div>
+    <div class="unit-pill" data-unit="4" onclick="showUnit(4)">
+      <span class="dot"></span> Unit 4 · Machine Learning
+    </div>
+  </div>
+  <div class="scroll-hint">↓ choose a unit</div>
+</section>
+
+<!-- ══════════════════════════════ MAIN ══════════════════════════════ -->
+<main>
+
+<!-- ────────────────────── UNIT 1 ────────────────────── -->
+<div class="unit-section" id="unit-1">
+
+  <button class="home-btn" onclick="showHome()">← Back to Home</button>
+
+  <div class="unit-header" style="--hue-bg: var(--accent1); border: 1px solid rgba(124,106,255,0.25); background: linear-gradient(135deg, rgba(124,106,255,0.08), rgba(6,200,255,0.04));">
+    <div class="unit-header-badge" style="color: var(--accent1)">◆ UNIT 01 · DATA SCIENCE FOUNDATIONS</div>
+    <h1>Data Preprocessing 🛠️</h1>
+    <div class="tldr" style="border-color: var(--accent1);">
+      <strong>TL;DR:</strong> Raw data is messy, broken, and noisy. Preprocessing is the "prep kitchen" step — clean it, reshape it, and only then feed it to your AI model.
+    </div>
+  </div>
+
+  <!-- CONCEPT -->
+  <div class="card fade-in">
+    <div class="card-label" style="color:var(--accent1)">🧠 concept</div>
+    <h2>Why Does Preprocessing Even Matter?</h2>
+    <p><strong>Plain English:</strong> Garbage in = garbage out. If you feed broken data to a model, it'll make broken predictions.</p>
+    <div class="analogy">
+      <span class="analogy-tag">🎂 Analogy</span>
+      <p style="margin-top:0.5rem; color:var(--text2);">Imagine baking a cake with <strong style="color:var(--text)">broken eggs, pebble-filled flour, and no sugar measurements</strong>. You could have the best oven in the world — the cake would still be a disaster. Data preprocessing is your kitchen prep: measure everything, remove the bad ingredients, and get organized before you start baking.</p>
+    </div>
+    <p>Preprocessing does 5 powerful things:</p>
+    <div class="concept-grid">
+      <div class="concept-card">
+        <span class="icon">🎯</span>
+        <h4>Boosts Accuracy</h4>
+        <p>Clean data trains models that actually predict correctly.</p>
+      </div>
+      <div class="concept-card">
+        <span class="icon">⚡</span>
+        <h4>Saves Time</h4>
+        <p>Models train faster when data has no garbage to trip over.</p>
+      </div>
+      <div class="concept-card">
+        <span class="icon">🧹</span>
+        <h4>Removes Noise</h4>
+        <p>Typos, duplicates, and junk values get eliminated.</p>
+      </div>
+      <div class="concept-card">
+        <span class="icon">🔧</span>
+        <h4>Fixes Missing Pieces</h4>
+        <p>Handles blank cells so the model isn't confused.</p>
+      </div>
+      <div class="concept-card">
+        <span class="icon">📐</span>
+        <h4>Standardizes Format</h4>
+        <p>Numbers on the same scale → fair comparisons.</p>
+      </div>
+      <div class="concept-card">
+        <span class="icon">🤝</span>
+        <h4>Merges Sources</h4>
+        <p>Combines scattered datasets into one clean table.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- VISUAL -->
+  <div class="card fade-in">
+    <div class="card-label" style="color:var(--accent5)">📊 visual / diagram</div>
+    <h2>The 6-Step Preprocessing Pipeline</h2>
+    <div class="pipeline">
+      <div class="pipeline-step"><div class="pstep-box" style="--step-color:var(--accent1); border-color:rgba(124,106,255,0.4); color:var(--accent1)">1 · Collect</div><div class="pstep-arrow">→</div></div>
+      <div class="pipeline-step"><div class="pstep-box" style="--step-color:var(--accent5); border-color:rgba(6,200,255,0.3); color:var(--accent5)">2 · Clean</div><div class="pstep-arrow">→</div></div>
+      <div class="pipeline-step"><div class="pstep-box" style="--step-color:var(--accent3); border-color:rgba(0,229,160,0.3); color:var(--accent3)">3 · Handle Missing</div><div class="pstep-arrow">→</div></div>
+      <div class="pipeline-step"><div class="pstep-box" style="--step-color:var(--accent4); border-color:rgba(255,209,102,0.3); color:var(--accent4)">4 · Integrate</div><div class="pstep-arrow">→</div></div>
+      <div class="pipeline-step"><div class="pstep-box" style="--step-color:var(--accent2); border-color:rgba(255,107,157,0.3); color:var(--accent2)">5 · Transform</div><div class="pstep-arrow">→</div></div>
+      <div class="pipeline-step"><div class="pstep-box" style="--step-color:#a78bfa; border-color:rgba(167,139,250,0.3); color:#a78bfa">6 · Reduce</div></div>
+    </div>
+    <div class="diagram">
+RAW DATA
+  ┌─────────────────────────────────────────────────────────────┐
+  │  Name  │  Age  │  Marks  │  Grade  │  Note                  │
+  ├─────────┼───────┼─────────┼─────────┼────────────────────── │
+  │  Amit  │   18  │   85    │    A    │                        │
+  │  Riya  │  220  │   72    │    B    │  ← AGE NOISE (typo)    │
+  │  Kunal │  NaN  │   NaN   │    B    │  ← MISSING VALUES      │
+  │  Riya  │   19  │   72    │    B    │  ← DUPLICATE ROW       │
+  │  Priya │   20  │    5    │    F    │  ← OUTLIER (score: 5?) │
+  └─────────────────────────────────────────────────────────────┘
+
+AFTER PREPROCESSING ✓
+  ┌─────────────────────────────────────────────────┐
+  │  Name  │  Age  │  Marks  │  Marks_Norm          │
+  ├─────────┼───────┼─────────┼───────────────────── │
+  │  Amit  │   18  │   85    │   1.00               │
+  │  Riya  │   19  │   72    │   0.85               │
+  │  Kunal │ 18.5  │   78    │   0.91  ← filled     │
+  └─────────────────────────────────────────────────┘
+    </div>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Problem</th><th>What It Looks Like</th><th>Fix</th></tr>
+        <tr><td><span class="tag" style="background:rgba(255,107,157,0.15);color:var(--accent2)">Missing Value</span></td><td><code>NaN</code> in a cell</td><td>Fill with mean / median / mode, or drop row</td></tr>
+        <tr><td><span class="tag" style="background:rgba(255,209,102,0.15);color:var(--accent4)">Noise</span></td><td>Age = 220 (typo)</td><td>Remove during cleaning phase</td></tr>
+        <tr><td><span class="tag" style="background:rgba(6,200,255,0.15);color:var(--accent5)">Duplicate</span></td><td>Same row twice</td><td><code>df.drop_duplicates()</code></td></tr>
+        <tr><td><span class="tag" style="background:rgba(124,106,255,0.15);color:var(--accent1)">Outlier</span></td><td>Score = 5 in a class avg of 70</td><td>Detect & filter with conditions</td></tr>
+        <tr><td><span class="tag" style="background:rgba(0,229,160,0.15);color:var(--accent3)">Text Data</span></td><td>"Yes", "No" in a column</td><td>Encode → 1, 0 with <code>get_dummies()</code></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- NOISE vs OUTLIERS -->
+  <div class="card fade-in">
+    <div class="card-label" style="color:var(--accent4)">⚠️ key distinction</div>
+    <h2>Noise vs. Outliers — Not the Same Thing!</h2>
+    <div class="callout warn">
+      <span class="callout-icon">⚠️</span>
+      <p>Students mix these up constantly. Learn the difference right now and you'll never forget it.</p>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <tr><th></th><th>🔇 Noise</th><th>📍 Outlier</th></tr>
+        <tr><td><strong>Definition</strong></td><td>Incorrect / invalid data (error)</td><td>Valid data, but extremely different</td></tr>
+        <tr><td><strong>Example</strong></td><td>Age = 220 (impossible!)</td><td>Score = 5 in a class where avg is 70</td></tr>
+        <tr><td><strong>Is it real?</strong></td><td>No — it's a mistake</td><td>Yes — it actually happened</td></tr>
+        <tr><td><strong>Action</strong></td><td>Always remove it</td><td>Investigate first, then decide</td></tr>
+      </table>
+    </div>
+    <div class="analogy">
+      <span class="analogy-tag">🧪 Real-World</span>
+      <p style="margin-top:0.5rem;color:var(--text2);">In a hospital dataset, a patient weight of <strong style="color:var(--text)">500kg</strong> is <em>noise</em> (data entry error). A weight of <strong style="color:var(--text)">150kg</strong> in a dataset of children is an <em>outlier</em> (possible, but worth checking).</p>
+    </div>
+  </div>
+
+  <!-- PYTHON CODE -->
+  <div class="card fade-in">
+    <div class="card-label" style="color:var(--accent3)">✅ python example</div>
+    <h2>Real Python: From Mess to Clean in 6 Steps</h2>
+    <div class="code-block">
+      <div class="code-block-header">
+        <div class="dots"><span></span><span></span><span></span></div>
+        <span class="lang">Python · preprocessing.py</span>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      </div>
+      <pre><span class="cm"># ── Step 1: Import & Load ──────────────────────────────</span>
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+data = {
+    <span class="str">'Name'</span>:  [<span class="str">'Amit'</span>, <span class="str">'Riya'</span>, <span class="str">'Kunal'</span>, <span class="str">'Riya'</span>],
+    <span class="str">'Age'</span>:   [<span class="num">18</span>, <span class="num">19</span>, np.nan, <span class="num">19</span>],   <span class="cm"># Kunal's age is missing!</span>
+    <span class="str">'Marks'</span>: [<span class="num">85</span>, <span class="num">72</span>, <span class="num">78</span>, <span class="num">72</span>]
+}
+df = pd.<span class="fn">DataFrame</span>(data)
+
+<span class="cm"># ── Step 2: Fill Missing Values ────────────────────────</span>
+avg_age = df[<span class="str">'Age'</span>].<span class="fn">mean</span>()          <span class="cm"># 18.67</span>
+df[<span class="str">'Age'</span>].<span class="fn">fillna</span>(avg_age, inplace=<span class="kw">True</span>)
+
+<span class="cm"># ── Step 3: Remove Duplicates ──────────────────────────</span>
+df = df.<span class="fn">drop_duplicates</span>()           <span class="cm"># Riya appears twice — gone!</span>
+
+<span class="cm"># ── Step 4: Encode Text → Numbers ─────────────────────</span>
+encoded_df = pd.<span class="fn">get_dummies</span>(df, columns=[<span class="str">'Name'</span>])
+
+<span class="cm"># ── Step 5: Normalize (Min-Max Scaling) ───────────────</span>
+df[<span class="str">'Marks_Norm'</span>] = (df[<span class="str">'Marks'</span>] - df[<span class="str">'Marks'</span>].<span class="fn">min</span>()) / \
+                  (df[<span class="str">'Marks'</span>].<span class="fn">max</span>() - df[<span class="str">'Marks'</span>].<span class="fn">min</span>())
+
+<span class="cm"># ── Step 6: Detect Outliers ────────────────────────────</span>
+outliers = df[df[<span class="str">'Marks'</span>] &lt; <span class="num">40</span>]     <span class="cm"># Anyone scoring below 40 is flagged</span>
+<span class="fn">print</span>(outliers)</pre>
+    </div>
+    <div class="callout tip">
+      <span class="callout-icon">💡</span>
+      <p><strong>Why Min-Max Normalization?</strong> It squishes all values between 0 and 1. So a column with values 0–100 and another with values 0–1,000,000 are treated <em>equally</em> by the model. Without this, the big-number column would always dominate!</p>
+    </div>
+  </div>
+
+  <!-- QUIZ 1 -->
+  <div class="quiz-card fade-in" id="quiz-1">
+    <div class="quiz-header">❓ quick check — unit 1</div>
+    <div class="quiz-q">A student's recorded age is 999 in a dataset. A classmate's score is 98 when the class average is 60. Which of these is <em>noise</em> and which is an <em>outlier</em>?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="checkQuiz(this, true, '1')">
+        <span class="opt-letter">A</span>
+        Age 999 = Noise 🔇 | Score 98 = Outlier 📍
+      </button>
+      <button class="quiz-opt" onclick="checkQuiz(this, false, '1')">
+        <span class="opt-letter">B</span>
+        Age 999 = Outlier 📍 | Score 98 = Noise 🔇
+      </button>
+      <button class="quiz-opt" onclick="checkQuiz(this, false, '1')">
+        <span class="opt-letter">C</span>
+        Both are noise — both should be deleted
+      </button>
+      <button class="quiz-opt" onclick="checkQuiz(this, false, '1')">
+        <span class="opt-letter">D</span>
+        Both are outliers — both are statistically extreme
+      </button>
+    </div>
+    <div class="quiz-feedback" id="qf-1"></div>
+  </div>
+
+  <div class="unit-nav">
+    <button class="unit-nav-btn" disabled>← Previous</button>
+    <div class="score-wrap">Score: <span class="score-num" id="score-display">0</span> pts</div>
+    <button class="unit-nav-btn" onclick="showUnit(2)">Next: NumPy & Pandas →</button>
+  </div>
+</div>
+
+<!-- ────────────────────── UNIT 2 ────────────────────── -->
+<div class="unit-section" id="unit-2">
+
+  <button class="home-btn" onclick="showHome()">← Back to Home</button>
+
+  <div class="unit-header" style="border: 1px solid rgba(0,229,160,0.25); background: linear-gradient(135deg, rgba(0,229,160,0.07), rgba(6,200,255,0.04));">
+    <div class="unit-header-badge" style="color:var(--accent3)">◆ UNIT 02 · LIBRARIES</div>
+    <h1>NumPy & Pandas 🐼🧮</h1>
+    <div class="tldr" style="border-color:var(--accent3);">
+      <strong>TL;DR:</strong> NumPy = math genius (fast arrays). Pandas = Excel-on-steroids (tables + cleaning). Together they're your whole data science toolkit.
+    </div>
+  </div>
+
+  <!-- WHY NOT LISTS? -->
+  <div class="card fade-in">
+    <div class="card-label" style="color:var(--accent3)">🧠 concept</div>
+    <h2>Why Can't We Just Use Python Lists?</h2>
+    <p><strong>Plain English:</strong> Python lists are like a backpack — fine for textbooks, but terrible for carrying 10,000 bricks.</p>
+    <div class="analogy">
+      <span class="analogy-tag">🏎️ Analogy</span>
+      <p style="margin-top:0.5rem;color:var(--text2);">Python lists are like a <strong style="color:var(--text)">bicycle</strong> — totally fine around the block. NumPy arrays are like a <strong style="color:var(--text)">Formula 1 car</strong>. Same idea, but 50–100× faster with way better fuel efficiency (memory).</p>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <tr><th></th><th>🐍 Python Lists</th><th>⚡ NumPy Arrays</th><th>🐼 Pandas DataFrames</th></tr>
+        <tr><td><strong>Speed</strong></td><td>Slow on big data</td><td>50–100× faster</td><td>Fast (built on NumPy)</td></tr>
+        <tr><td><strong>Memory</strong></td><td>High usage</td><td>Very efficient</td><td>Moderate</td></tr>
+        <tr><td><strong>Math</strong></td><td>Manual loops needed</td><td>One-line operations</td><td>Statistical functions</td></tr>
+        <tr><td><strong>Best For</strong></td><td>Small, general tasks</td><td>Numbers & matrices</td><td>Tables & analysis</td></tr>
+        <tr><td><strong>Think of it as</strong></td><td>Notepad</td><td>Calculator on steroids</td><td>Smart Excel</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- NUMPY -->
+  <h2 class="section-title" style="color:var(--accent3)">🧮 Part 1: NumPy</h2>
+
+  <div class="card fade-in">
+    <div class="card-label" style="color:var(--accent3)">📊 visual</div>
+    <h2>1D, 2D & 3D Arrays — Visualized</h2>
+    <div class="diagram">
+1D Array (Vector)  → Think: a single row of seats
+  arr1 = [10, 20, 30, 40, 50]
+        [  0   1   2   3   4 ]  ← index
+
+2D Array (Matrix)  → Think: a chessboard / spreadsheet
+  arr2 = [[ 1,  2,  3],          row 0
+          [ 4,  5,  6],          row 1
+          [ 7,  8,  9]]          row 2
+          col0 col1 col2
+
+3D Array (Tensor)  → Think: a stack of spreadsheets (like layers)
+  arr3 = [[[1,2],[3,4]],    ← Sheet 0
+          [[5,6],[7,8]]]    ← Sheet 1
+         shape: (2, 2, 2)
+
+Slicing reminder:
+  arr1[1:4]         → [20, 30, 40]   ← positions 1,2,3
+  arr2[:2, :2]      → [[1,2],[4,5]]  ← first 2 rows & cols
+  arr1[arr1 > 20]   → [30, 40, 50]  ← boolean filter ✓
+    </div>
+    <div class="callout info">
+      <span class="callout-icon">🔎</span>
+      <p><strong>Quick Shape Hack:</strong> <span class="hl b">arr.shape</span> tells you the dimensions instantly. A shape of <span class="hl b">(3, 4)</span> means 3 rows, 4 columns — like reading a grid.</p>
+    </div>
+  </div>
+
+  <div class="card fade-in">
+    <div class="card-label" style="color:var(--accent3)">✅ numpy code</div>
+    <h2>NumPy in Action</h2>
+    <div class="code-block">
+      <div class="code-block-header">
+        <div class="dots"><span></span><span></span><span></span></div>
+        <span class="lang">Python · numpy_demo.py</span>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      </div>
+      <pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># ── Creating Arrays ────────────────────────────────────</span>
+arr1 = np.<span class="fn">array</span>([<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>, <span class="num">40</span>, <span class="num">50</span>])
+arr2 = np.<span class="fn">array</span>([[<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>], [<span class="num">4</span>,<span class="num">5</span>,<span class="num">6</span>]])   <span class="cm"># 2D: 2 rows, 3 cols</span>
+
+<span class="cm"># Auto-generate shortcuts:</span>
+zeros = np.<span class="fn">zeros</span>((<span class="num">3</span>,<span class="num">3</span>))          <span class="cm"># 3×3 grid of 0s</span>
+evens = np.<span class="fn">arange</span>(<span class="num">0</span>, <span class="num">10</span>, <span class="num">2</span>)      <span class="cm"># [0, 2, 4, 6, 8]</span>
+randoms = np.random.<span class="fn">rand</span>(<span class="num">5</span>)      <span class="cm"># 5 random floats 0–1</span>
+
+<span class="cm"># ── Element-wise Math (no loops needed!) ──────────────</span>
+a = np.<span class="fn">array</span>([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>])
+b = np.<span class="fn">array</span>([<span class="num">4</span>, <span class="num">5</span>, <span class="num">6</span>])
+
+result = a + b            <span class="cm"># → [5, 7, 9]  ← NO loop needed!</span>
+squared = a ** <span class="num">2</span>         <span class="cm"># → [1, 4, 9]</span>
+
+<span class="cm"># ── Statistics ─────────────────────────────────────────</span>
+marks = np.<span class="fn">array</span>([<span class="num">72</span>, <span class="num">85</span>, <span class="num">91</span>, <span class="num">63</span>, <span class="num">78</span>])
+<span class="fn">print</span>(np.<span class="fn">mean</span>(marks))     <span class="cm"># 77.8  — average</span>
+<span class="fn">print</span>(np.<span class="fn">std</span>(marks))      <span class="cm"># spread of scores</span>
+<span class="fn">print</span>(np.<span class="fn">median</span>(marks))   <span class="cm"># middle value</span>
+
+<span class="cm"># ── Reshape ─────────────────────────────────────────────</span>
+flat = np.<span class="fn">arange</span>(<span class="num">12</span>)             <span class="cm"># [0,1,2,...,11]</span>
+matrix = flat.<span class="fn">reshape</span>(<span class="num">3</span>, <span class="num">4</span>)      <span class="cm"># 3 rows × 4 cols</span></pre>
+    </div>
+  </div>
+
+  <!-- PANDAS -->
+  <h2 class="section-title" style="color:var(--accent5)">🐼 Part 2: Pandas</h2>
+
+  <div class="card fade-in">
+    <div class="card-label" style="color:var(--accent5)">📊 visual</div>
+    <h2>Series vs DataFrame — Visualized</h2>
+    <div class="diagram">
+Series (1D — one column with labels):
+  pd.Series([90, 85, 72], index=['Math','Science','English'])
+
+  Math       90
+  Science    85
+  English    72
+  dtype: int64
+
+
+DataFrame (2D — full table):
+  pd.DataFrame({
+      'Name':   ['Amit', 'Riya', 'Kunal'],
+      'Age':    [18, 19, 20],
+      'Marks':  [85, 72, 91]
+  })
+
+  ┌───┬───────┬─────┬───────┐
+  │   │ Name  │ Age │ Marks │  ← columns
+  ├───┼───────┼─────┼───────┤
+  │ 0 │ Amit  │  18 │   85  │
+  │ 1 │ Riya  │  19 │   72  │  ← rows (index)
+  │ 2 │ Kunal │  20 │   91  │
+  └───┴───────┴─────┴───────┘
+
+loc  → use LABEL:  df.loc[1, 'Name']   → 'Riya'  (end-inclusive)
+iloc → use NUMBER: df.iloc[0:2, 0:2]  → top-left 2×2 (end-exclusive)
+    </div>
+  </div>
+
+  <div class="card fade-in">
+    <div class="card-label" style="color:var(--accent5)">✅ pandas code</div>
+    <h2>Pandas: The Swiss Army Knife</h2>
+    <div class="code-block">
+      <div class="code-block-header">
+        <div class="dots"><span></span><span></span><span></span></div>
+        <span class="lang">Python · pandas_demo.py</span>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      </div>
+      <pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+df = pd.<span class="fn">read_csv</span>(<span class="str">'students.csv'</span>)   <span class="cm"># load from file</span>
+
+<span class="cm"># ── Explore ─────────────────────────────────────────────</span>
+df.<span class="fn">head</span>()          <span class="cm"># first 5 rows</span>
+df.<span class="fn">info</span>()          <span class="cm"># data types + memory</span>
+df.<span class="fn">describe</span>()      <span class="cm"># stats: mean, min, max, %tiles</span>
+df.<span class="fn">isnull</span>().<span class="fn">sum</span>() <span class="cm"># count missing values per column</span>
+
+<span class="cm"># ── Select & Filter ─────────────────────────────────────</span>
+df[<span class="str">'Name'</span>]                    <span class="cm"># single column (Series)</span>
+df.<span class="fn">loc</span>[<span class="num">0</span>, <span class="str">'Name'</span>]             <span class="cm"># row 0, 'Name' column (label)</span>
+df.<span class="fn">iloc</span>[<span class="num">0</span>:<span class="num">2</span>, <span class="num">0</span>:<span class="num">2</span>]            <span class="cm"># first 2 rows, first 2 cols (index)</span>
+df[df[<span class="str">'Age'</span>] &lt; <span class="num">20</span>]           <span class="cm"># only students under 20</span>
+
+<span class="cm"># ── Handle Missing ─────────────────────────────────────</span>
+df.<span class="fn">dropna</span>()                    <span class="cm"># delete rows with NaN</span>
+df.<span class="fn">fillna</span>(<span class="num">0</span>)                  <span class="cm"># replace NaN with 0</span>
+df.<span class="fn">fillna</span>(method=<span class="str">'ffill'</span>)     <span class="cm"># fill with previous value</span>
+
+<span class="cm"># ── Sorting & Grouping ─────────────────────────────────</span>
+df.<span class="fn">sort_values</span>(by=<span class="str">'Marks'</span>, ascending=<span class="kw">False</span>)
+df.<span class="fn">groupby</span>(<span class="str">'Department'</span>)[<span class="str">'Salary'</span>].<span class="fn">mean</span>()
+
+<span class="cm"># ── Merge Two Datasets ─────────────────────────────────</span>
+combined = pd.<span class="fn">concat</span>([df1, df2])         <span class="cm"># stack vertically</span>
+merged   = df1.<span class="fn">join</span>(df2, how=<span class="str">'inner'</span>)   <span class="cm"># join by index</span>
+
+<span class="cm"># ── Save Results ───────────────────────────────────────</span>
+df.<span class="fn">to_csv</span>(<span class="str">'clean_output.csv'</span>, index=<span class="kw">False</span>)</pre>
+    </div>
+    <div class="callout tip">
+      <span class="callout-icon">🎯</span>
+      <p><strong>Pro trick:</strong> Remember <span class="hl g">loc</span> = Labels (end-<em>inclusive</em>) and <span class="hl g">iloc</span> = Index/integers (end-<em>exclusive</em>). Mix them up and you'll grab the wrong data every time.</p>
+    </div>
+  </div>
+
+  <!-- QUIZ 2 -->
+  <div class="quiz-card fade-in" id="quiz-2">
+    <div class="quiz-header">❓ quick check — unit 2</div>
+    <div class="quiz-q">You have a DataFrame with 10 rows. You run <code>df.iloc[2:5, 0:2]</code>. How many rows and how many columns do you get back?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="checkQuiz(this, false, '2')">
+        <span class="opt-letter">A</span>
+        4 rows, 3 columns
+      </button>
+      <button class="quiz-opt" onclick="checkQuiz(this, true, '2')">
+        <span class="opt-letter">B</span>
+        3 rows, 2 columns
+      </button>
+      <button class="quiz-opt" onclick="checkQuiz(this, false, '2')">
+        <span class="opt-letter">C</span>
+        3 rows, 3 columns
+      </button>
+      <button class="quiz-opt" onclick="checkQuiz(this, false, '2')">
+        <span class="opt-letter">D</span>
+        4 rows, 2 columns
+      </button>
+    </div>
+    <div class="quiz-feedback" id="qf-2"></div>
+  </div>
+
+  <div class="unit-nav">
+    <button class="unit-nav-btn" onclick="showUnit(1)">← Data Preprocessing</button>
+    <div class="score-wrap">Score: <span class="score-num" id="score-display-2">0</span> pts</div>
+    <button class="unit-nav-btn" onclick="showUnit(3)">Next: Visualization →</button>
+  </div>
+</div>
+
+<!-- ────────────────────── UNIT 3 ────────────────────── -->
+<div class="unit-section" id="unit-3">
+
+  <button class="home-btn" onclick="showHome()">← Back to Home</button>
+
+  <div class="unit-header" style="border: 1px solid rgba(255,107,157,0.25); background: linear-gradient(135deg, rgba(255,107,157,0.07), rgba(255,209,102,0.04));">
+    <div class="unit-header-badge" style="color:var(--accent2)">◆ UNIT 03 · VISUALIZATION</div>
+    <h1>Matplotlib & Seaborn 🎨📈</h1>
+    <div class="tldr" style="border-color:var(--accent2);">
+      <strong>TL;DR:</strong> Matplotlib = the construction crew (total control, more code). Seaborn = the interior designer (beautiful stats plots, minimal code). Use both!
+    </div>
+  </div>
+
+  <div class="card fade-in">
+    <div class="card-label" style="color:var(--accent2)">🧠 concept</div>
+    <h2>Why Do We Even Visualize Data?</h2>
+    <p><strong>Plain English:</strong> No one reads a spreadsheet with 10,000 rows. Your brain reads a chart in 0.3 seconds.</p>
+    <div class="analogy">
+      <span class="analogy-tag">👁️ Analogy</span>
+      <p style="margin-top:0.5rem;color:var(--text2);">Ask someone to find the "trend" in a 10,000-row CSV — they'd go crazy. Show them a line graph — they see it instantly. <strong style="color:var(--text)">Humans are visual creatures first, number-readers second.</strong> Data visualization is our translation layer.</p>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <tr><th></th><th>🏗️ Matplotlib</th><th>🦋 Seaborn</th></tr>
+        <tr><td><strong>Best for</strong></td><td>Custom, basic charts, full control</td><td>Statistical analysis, beautiful defaults</td></tr>
+        <tr><td><strong>Code needed</strong></td><td>More lines, more setup</td><td>1–2 lines for complex plots</td></tr>
+        <tr><td><strong>Works with</strong></td><td>Arrays and lists</td><td>Pandas DataFrames directly</td></tr>
+        <tr><td><strong>Think of it as</strong></td><td>Construction crew (framework)</td><td>Interior designer (on top of the frame)</td></tr>
+        <tr><td><strong>Import</strong></td><td><code>import matplotlib.pyplot as plt</code></td><td><code>import seaborn as sns</code></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- MATPLOTLIB PLOTS -->
+  <div class="card fade-in">
+    <div class="card-label" style="color:var(--accent2)">📊 the 6 essential plots</div>
+    <h2>Matplotlib: Your Chart Toolbox</h2>
+    <div class="concept-grid">
+      <div class="concept-card">
+        <span class="icon">📈</span>
+        <h4>Line Plot</h4>
+        <p>Trends over time. Connects dots with lines.</p>
+        <span class="badge purple">plt.plot()</span>
+      </div>
+      <div class="concept-card">
+        <span class="icon">🌌</span>
+        <h4>Scatter Plot</h4>
+        <p>Relationship between 2 variables. No connecting lines.</p>
+        <span class="badge green">plt.scatter()</span>
+      </div>
+      <div class="concept-card">
+        <span class="icon">📊</span>
+        <h4>Bar Chart</h4>
+        <p>Compare categories. Use <code>barh()</code> for horizontal.</p>
+        <span class="badge pink">plt.bar()</span>
+      </div>
+      <div class="concept-card">
+        <span class="icon">🍕</span>
+        <h4>Pie Chart</h4>
+        <p>Show proportions. Keep to 3–6 slices max!</p>
+        <span class="badge yellow">plt.pie()</span>
+      </div>
+      <div class="concept-card">
+        <span class="icon">🏙️</span>
+        <h4>Histogram</h4>
+        <p>Frequency distribution. Groups data into "bins".</p>
+        <span class="badge blue">plt.hist()</span>
+      </div>
+      <div class="concept-card">
+        <span class="icon">📦</span>
+        <h4>Boxplot</h4>
+        <p>Shows median, quartiles & outliers (dots outside whiskers).</p>
+        <span class="badge purple">plt.boxplot()</span>
+      </div>
+    </div>
+    <div class="diagram">
+WHEN TO USE WHICH CHART — Quick Decision Guide:
+
+  Question                          → Best Chart
+  ─────────────────────────────────────────────────
+  "How did X change over time?"     → 📈 Line Plot
+  "Is there a link between A & B?"  → 🌌 Scatter Plot
+  "Which category is biggest?"      → 📊 Bar Chart
+  "What % of the total is X?"       → 🍕 Pie Chart
+  "What's the distribution of X?"   → 🏙️ Histogram
+  "Where are the outliers in X?"    → 📦 Boxplot
+    </div>
+  </div>
+
+  <div class="card fade-in">
+    <div class="card-label" style="color:var(--accent2)">✅ matplotlib code</div>
+    <h2>Subplots — Multiple Charts at Once</h2>
+    <div class="code-block">
+      <div class="code-block-header">
+        <div class="dots"><span></span><span></span><span></span></div>
+        <span class="lang">Python · matplotlib_demo.py</span>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      </div>
+      <pre><span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+x = np.<span class="fn">linspace</span>(<span class="num">0</span>, <span class="num">10</span>, <span class="num">100</span>)
+y = np.<span class="fn">sin</span>(x)
+
+<span class="cm"># ── Basic Customization ─────────────────────────────────</span>
+plt.<span class="fn">plot</span>(x, y, color=<span class="str">'royalblue'</span>, marker=<span class="str">'o'</span>, linewidth=<span class="num">2</span>)
+plt.<span class="fn">title</span>(<span class="str">'Sin Wave'</span>)
+plt.<span class="fn">xlabel</span>(<span class="str">'X Axis'</span>)
+plt.<span class="fn">ylabel</span>(<span class="str">'Y Axis'</span>)
+plt.<span class="fn">legend</span>([<span class="str">'sin(x)'</span>])
+plt.<span class="fn">show</span>()
+
+<span class="cm"># ── Object-Oriented: Multiple Subplots ─────────────────</span>
+fig, axes = plt.<span class="fn">subplots</span>(nrows=<span class="num">2</span>, ncols=<span class="num">2</span>, figsize=(<span class="num">10</span>, <span class="num">8</span>))
+
+<span class="cm"># Top-left: Line chart</span>
+axes[<span class="num">0</span>,<span class="num">0</span>].<span class="fn">plot</span>(x, y, <span class="str">'g'</span>)
+axes[<span class="num">0</span>,<span class="num">0</span>].<span class="fn">set_title</span>(<span class="str">'Line Chart'</span>)
+
+<span class="cm"># Top-right: Scatter</span>
+axes[<span class="num">0</span>,<span class="num">1</span>].<span class="fn">scatter</span>(x, y, c=<span class="str">'red'</span>, s=<span class="num">5</span>)
+axes[<span class="num">0</span>,<span class="num">1</span>].<span class="fn">set_title</span>(<span class="str">'Scatter Plot'</span>)
+
+plt.<span class="fn">tight_layout</span>()
+plt.<span class="fn">show</span>()</pre>
+    </div>
+    <div class="callout info">
+      <span class="callout-icon">💡</span>
+      <p>In OO style, use <span class="hl b">.set_title()</span> not <span class="hl b">plt.title()</span>. Each <span class="hl b">axes[i,j]</span> is its own mini-plot on the grid.</p>
+    </div>
+  </div>
+
+  <!-- SEABORN -->
+  <h2 class="section-title" style="color:var(--accent4)">🦋 Seaborn: Statistical Artist</h2>
+
+  <div class="card fade-in">
+    <div class="card-label" style="color:var(--accent4)">📊 seaborn plot types</div>
+    <h2>The Power Plots — When to Use Each</h2>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Plot</th><th>Use Case</th><th>Code</th><th>Magic Feature</th></tr>
+        <tr><td>🔥 Heatmap</td><td>Show correlations between variables</td><td><span class="hl y">sns.heatmap()</span></td><td>Color = strength of relationship</td></tr>
+        <tr><td>👯 Pair Plot</td><td>Explore ALL variable pairs at once</td><td><span class="hl y">sns.pairplot()</span></td><td>One line → entire dataset overview</td></tr>
+        <tr><td>🔗 Joint Plot</td><td>Relationship + both distributions</td><td><span class="hl y">sns.jointplot()</span></td><td>Center scatter + side histograms</td></tr>
+        <tr><td>🗂️ FacetGrid</td><td>Same plot per category</td><td><span class="hl y">sns.FacetGrid()</span></td><td>Side-by-side filtered plots</td></tr>
+        <tr><td>📈 Regplot</td><td>Scatter + trend line</td><td><span class="hl y">sns.regplot()</span></td><td>Auto-fits regression line + CI</td></tr>
+      </table>
+    </div>
+    <div class="code-block">
+      <div class="code-block-header">
+        <div class="dots"><span></span><span></span><span></span></div>
+        <span class="lang">Python · seaborn_demo.py</span>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      </div>
+      <pre><span class="kw">import</span> seaborn <span class="kw">as</span> sns
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># ── Style Setup ─────────────────────────────────────────</span>
+sns.<span class="fn">set_style</span>(<span class="str">"whitegrid"</span>)          <span class="cm"># clean background</span>
+sns.<span class="fn">set_palette</span>(<span class="str">"husl"</span>)            <span class="cm"># distinct, pretty colors</span>
+
+<span class="cm"># ── Seaborn works directly with DataFrames! ────────────</span>
+df = sns.<span class="fn">load_dataset</span>(<span class="str">'iris'</span>)     <span class="cm"># famous flower dataset</span>
+
+<span class="cm"># Scatter plot — tells Seaborn which columns to use</span>
+sns.<span class="fn">scatterplot</span>(data=df, x=<span class="str">'petal_length'</span>, y=<span class="str">'petal_width'</span>,
+               hue=<span class="str">'species'</span>)      <span class="cm"># auto-colored by species!</span>
+
+<span class="cm"># Pair plot — one line shows EVERYTHING</span>
+sns.<span class="fn">pairplot</span>(df, hue=<span class="str">'species'</span>)
+
+<span class="cm"># Heatmap of correlation matrix</span>
+corr = df.<span class="fn">corr</span>()
+sns.<span class="fn">heatmap</span>(corr, annot=<span class="kw">True</span>, cmap=<span class="str">'coolwarm'</span>)
+
+<span class="cm"># Regression plot with confidence interval</span>
+sns.<span class="fn">regplot</span>(data=df, x=<span class="str">'petal_length'</span>, y=<span class="str">'petal_width'</span>)</pre>
+    </div>
+  </div>
+
+  <!-- QUIZ 3 -->
+  <div class="quiz-card fade-in" id="quiz-3">
+    <div class="quiz-header">❓ quick check — unit 3</div>
+    <div class="quiz-q">Your data scientist friend wants to see <em>how all variables in a dataset relate to each other</em> with a single command. Which Seaborn plot is the perfect tool?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="checkQuiz(this, false, '3')">
+        <span class="opt-letter">A</span>
+        sns.heatmap() — it shows correlations
+      </button>
+      <button class="quiz-opt" onclick="checkQuiz(this, true, '3')">
+        <span class="opt-letter">B</span>
+        sns.pairplot() — auto-generates all variable pairs
+      </button>
+      <button class="quiz-opt" onclick="checkQuiz(this, false, '3')">
+        <span class="opt-letter">C</span>
+        sns.regplot() — it fits a trend line
+      </button>
+      <button class="quiz-opt" onclick="checkQuiz(this, false, '3')">
+        <span class="opt-letter">D</span>
+        sns.jointplot() — shows relationship + distributions
+      </button>
+    </div>
+    <div class="quiz-feedback" id="qf-3"></div>
+  </div>
+
+  <div class="unit-nav">
+    <button class="unit-nav-btn" onclick="showUnit(2)">← NumPy & Pandas</button>
+    <div class="score-wrap">Score: <span class="score-num" id="score-display-3">0</span> pts</div>
+    <button class="unit-nav-btn" onclick="showUnit(4)">Next: Machine Learning →</button>
+  </div>
+</div>
+
+<!-- ────────────────────── UNIT 4 ────────────────────── -->
+<div class="unit-section" id="unit-4">
+
+  <button class="home-btn" onclick="showHome()">← Back to Home</button>
+
+  <div class="unit-header" style="border: 1px solid rgba(255,209,102,0.25); background: linear-gradient(135deg, rgba(255,209,102,0.07), rgba(255,107,157,0.04));">
+    <div class="unit-header-badge" style="color:var(--accent4)">◆ UNIT 04 · ML CLASSIFICATION</div>
+    <h1>Machine Learning 🤖</h1>
+    <div class="tldr" style="border-color:var(--accent4);">
+      <strong>TL;DR:</strong> Instead of hardcoding rules, we show ML algorithms labeled examples and they learn patterns. Scikit-Learn makes this easy. We evaluate results with accuracy, F1 score, and a confusion matrix.
+    </div>
+  </div>
+
+  <!-- CONCEPT -->
+  <div class="card fade-in">
+    <div class="card-label" style="color:var(--accent4)">🧠 concept</div>
+    <h2>What Even Is Machine Learning?</h2>
+    <p><strong>Plain English:</strong> Instead of writing "if age > 50 AND smokes → high risk," you just show the computer 10,000 patient records with outcomes, and <em>it</em> figures out the rules.</p>
+    <div class="analogy">
+      <span class="analogy-tag">👶 Analogy</span>
+      <p style="margin-top:0.5rem;color:var(--text2);">Teaching a toddler to recognize apples: you don't write a formula about radius and color hex codes. You just show them a hundred apples saying <strong style="color:var(--text)">"apple!"</strong> and a hundred oranges saying <strong style="color:var(--text)">"orange!"</strong> Eventually their brain learns the pattern. That's <em>exactly</em> supervised ML.</p>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Type</th><th>Has Labels?</th><th>Goal</th><th>Real Example</th></tr>
+        <tr><td><span class="badge yellow">🎓 Supervised</span></td><td>✅ Yes</td><td>Predict categories / numbers</td><td>Spam detection, fraud alerts</td></tr>
+        <tr><td><span class="badge blue">🕵️ Unsupervised</span></td><td>❌ No</td><td>Find hidden patterns</td><td>Customer segmentation</td></tr>
+        <tr><td><span class="badge green">🎮 Reinforcement</span></td><td>🏆 Rewards</td><td>Learn via trial & error</td><td>Chess AI, self-driving cars</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 5 ALGORITHMS -->
+  <div class="card fade-in">
+    <div class="card-label" style="color:var(--accent4)">📊 the 5 classification models</div>
+    <h2>Scikit-Learn's Classification Superstars</h2>
+    <div class="concept-grid">
+      <div class="concept-card">
+        <span class="icon">📈</span>
+        <h4>Logistic Regression</h4>
+        <p>Uses a sigmoid curve → outputs probability 0–1. If &gt;0.5 → Class 1, else Class 0.</p>
+      </div>
+      <div class="concept-card">
+        <span class="icon">🌳</span>
+        <h4>Decision Tree</h4>
+        <p>Giant "20 Questions" game. Yes/no splits at every node until a final decision.</p>
+      </div>
+      <div class="concept-card">
+        <span class="icon">🌲</span>
+        <h4>Random Forest</h4>
+        <p>100 trees vote — majority wins. Reduces mistakes through teamwork.</p>
+      </div>
+      <div class="concept-card">
+        <span class="icon">🚀</span>
+        <h4>AdaBoost</h4>
+        <p>Sequential weak models. Each one focuses on what the previous got wrong.</p>
+      </div>
+      <div class="concept-card">
+        <span class="icon">⚔️</span>
+        <h4>SVM</h4>
+        <p>Draws the widest possible line between classes. Uses "kernels" for complex data.</p>
+      </div>
+    </div>
+    <div class="diagram">
+Decision Tree Visualization:
+
+         [Age &lt; 25?]
+         /          \
+       YES            NO
+  [Marks &gt; 70?]   [Experience &gt; 3?]
+   /       \         /        \
+PASS      FAIL    HIRED     REJECTED
+
+Random Forest = 100 of these trees voting together:
+Tree1: PASS  Tree2: PASS  Tree3: FAIL  Tree4: PASS ...
+            → Majority says: ✅ PASS
+
+SVM Hyperplane:
+  ●  ●                 ○  ○
+  ●  ●    ═══════════  ○  ○   ← max-margin line
+  ●        widest gap       ○
+  Class A  ←────────→  Class B
+    </div>
+    <div class="code-block">
+      <div class="code-block-header">
+        <div class="dots"><span></span><span></span><span></span></div>
+        <span class="lang">Python · ml_classification.py</span>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      </div>
+      <pre><span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> classification_report, confusion_matrix
+<span class="kw">from</span> sklearn.datasets <span class="kw">import</span> load_iris
+
+<span class="cm"># ── Step 1: Load & Split ────────────────────────────────</span>
+iris = <span class="fn">load_iris</span>()
+X = iris.data       <span class="cm"># Features: petal/sepal measurements</span>
+y = iris.target     <span class="cm"># Target: flower species (0, 1, or 2)</span>
+
+<span class="cm"># 80% training, 20% testing</span>
+X_train, X_test, y_train, y_test = <span class="fn">train_test_split</span>(
+    X, y, test_size=<span class="num">0.2</span>, random_state=<span class="num">42</span>
+)
+
+<span class="cm"># ── Step 2: Train ──────────────────────────────────────</span>
+model = <span class="cls">RandomForestClassifier</span>(n_estimators=<span class="num">100</span>)
+model.<span class="fn">fit</span>(X_train, y_train)   <span class="cm"># 🏋️ learning happens here!</span>
+
+<span class="cm"># ── Step 3: Predict & Evaluate ─────────────────────────</span>
+y_pred = model.<span class="fn">predict</span>(X_test)
+<span class="fn">print</span>(<span class="fn">classification_report</span>(y_test, y_pred))
+<span class="fn">print</span>(<span class="fn">confusion_matrix</span>(y_test, y_pred))</pre>
+    </div>
+  </div>
+
+  <!-- EVALUATION METRICS -->
+  <div class="card fade-in">
+    <div class="card-label" style="color:var(--accent2)">📊 model evaluation</div>
+    <h2>Did It Actually Learn? The Metrics</h2>
+    <div class="diagram">
+CONFUSION MATRIX — the 2×2 report card:
+
+              Predicted: YES   Predicted: NO
+  ────────────────────────────────────────────
+  Actual: YES │   TP ✅         │    FN ❌     │
+              │  "True Positive" │  "Missed it" │
+  ────────────────────────────────────────────
+  Actual: NO  │   FP ⚠️         │    TN ✅     │
+              │ "False Alarm"   │"True Negative"│
+  ────────────────────────────────────────────
+
+Example — Spam Filter:
+  TP = Email IS spam, model said SPAM ✅
+  TN = Email is NOT spam, model said INBOX ✅
+  FP = Legit email called SPAM ⚠️  (false alarm!)
+  FN = Actual spam reached INBOX ❌ (missed!)
+
+METRICS:
+  Accuracy  = (TP + TN) / Total           → overall correctness
+  Precision = TP / (TP + FP)             → "when it says YES, is it right?"
+  Recall    = TP / (TP + FN)             → "did it catch all real positives?"
+  F1 Score  = 2 × (Precision × Recall)   → best single-number balance
+                  (Precision + Recall)
+    </div>
+    <div class="callout warn">
+      <span class="callout-icon">⚠️</span>
+      <p><strong>Accuracy can lie!</strong> If 99% of emails are legit, a model that just says "INBOX" every time has 99% accuracy — but catches ZERO spam. Always check Precision, Recall, and F1 together.</p>
+    </div>
+  </div>
+
+  <!-- OVERFITTING vs UNDERFITTING -->
+  <div class="card fade-in">
+    <div class="card-label" style="color:var(--accent1)">⚠️ the two traps</div>
+    <h2>Overfitting vs Underfitting</h2>
+    <div class="table-wrap">
+      <table>
+        <tr><th></th><th>🧠 Overfitting (Memorizer)</th><th>🤷 Underfitting (Guesser)</th></tr>
+        <tr><td><strong>What it does</strong></td><td>Memorizes training data too closely</td><td>Too simple — doesn't learn enough</td></tr>
+        <tr><td><strong>Train accuracy</strong></td><td>Very high (~100%)</td><td>Low</td></tr>
+        <tr><td><strong>Test accuracy</strong></td><td>Very low (fails new data)</td><td>Also low</td></tr>
+        <tr><td><strong>Analogy</strong></td><td>Memorized practice test answers — fails the real exam</td><td>Guessing weather by flipping a coin</td></tr>
+        <tr><td><strong>Fix</strong></td><td>More data, simpler model, regularization</td><td>More features, more complex model</td></tr>
+      </table>
+    </div>
+    <div class="diagram">
+            FITTING SWEET SPOT
+
+Training
+Performance
+  100% │   ╭──────── overfitting zone ──────────
+       │  ╱
+       │ ╱ 
+       │╱
+   50% │  ← ideal zone (good generalization)
+       │                             ╲
+       │  underfitting zone ──────────╲
+    0% └─────────────────────────────────────
+                Model Complexity →
+
+Goal: Find the sweet spot where train ≈ test performance!
+    </div>
+  </div>
+
+  <!-- QUIZ 4 -->
+  <div class="quiz-card fade-in" id="quiz-4">
+    <div class="quiz-header">❓ quick check — unit 4</div>
+    <div class="quiz-q">A spam filter correctly identifies 95% of <em>spam as spam</em>, but also marks 40% of <em>legit emails as spam</em>. Which metric is HIGH and which is LOW?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="checkQuiz(this, false, '4')">
+        <span class="opt-letter">A</span>
+        Accuracy is HIGH, F1 is HIGH — great model!
+      </button>
+      <button class="quiz-opt" onclick="checkQuiz(this, true, '4')">
+        <span class="opt-letter">B</span>
+        Recall is HIGH (catches spam), Precision is LOW (too many false alarms)
+      </button>
+      <button class="quiz-opt" onclick="checkQuiz(this, false, '4')">
+        <span class="opt-letter">C</span>
+        Precision is HIGH, Recall is LOW — it's too conservative
+      </button>
+      <button class="quiz-opt" onclick="checkQuiz(this, false, '4')">
+        <span class="opt-letter">D</span>
+        This is an underfitting problem — model is too simple
+      </button>
+    </div>
+    <div class="quiz-feedback" id="qf-4"></div>
+  </div>
+
+  <!-- FINAL SUMMARY -->
+  <div class="card fade-in" style="background: linear-gradient(135deg, rgba(124,106,255,0.08), rgba(0,229,160,0.05)); border-color: rgba(124,106,255,0.3);">
+    <div class="card-label" style="color:var(--accent3)">🏆 full course recap</div>
+    <h2>You've covered all 4 units!</h2>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Unit</th><th>Core Concept</th><th>Key Library</th><th>Remember This</th></tr>
+        <tr><td><span class="badge purple">1</span> Preprocessing</td><td>Clean data before training</td><td>Pandas + NumPy</td><td>Noise ≠ Outlier</td></tr>
+        <tr><td><span class="badge green">2</span> NumPy & Pandas</td><td>Arrays + DataFrames</td><td>NumPy, Pandas</td><td>loc = labels, iloc = index</td></tr>
+        <tr><td><span class="badge pink">3</span> Visualization</td><td>Charts tell stories</td><td>Matplotlib, Seaborn</td><td>pairplot() = instant overview</td></tr>
+        <tr><td><span class="badge yellow">4</span> ML Classification</td><td>Learn from labeled data</td><td>Scikit-Learn</td><td>F1 > Accuracy alone</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="unit-nav">
+    <button class="unit-nav-btn" onclick="showUnit(3)">← Visualization</button>
+    <div class="score-wrap">Score: <span class="score-num" id="score-display-4">0</span> pts</div>
+    <button class="unit-nav-btn" onclick="showHome()" style="border-color: var(--accent3); color: var(--accent3)">🏠 Back to Start</button>
+  </div>
+</div>
+
+</main>
+
+<!-- ══════════════════════════════ JS ══════════════════════════════ -->
+<script>
+let currentUnit = null;
+let totalScore = 0;
+let answeredQuizzes = {};
+
+/* ── NAVIGATION ── */
+function showHome() {
+  document.getElementById('hero').scrollIntoView({ behavior: 'smooth' });
+  document.querySelectorAll('.unit-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  currentUnit = null;
+}
+
+function showUnit(n) {
+  // Hide hero
+  document.getElementById('hero').style.display = 'none';
+  // Hide all units
+  document.querySelectorAll('.unit-section').forEach(s => s.classList.remove('active'));
+  // Show target
+  const target = document.getElementById('unit-' + n);
+  target.classList.add('active');
+  // Scroll
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // Active nav
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.nav-btn')[n].classList.add('active');
+  currentUnit = n;
+  // Trigger fade-ins
+  setTimeout(() => triggerFadeIns(), 100);
+  // Update score displays
+  updateScoreDisplays();
+}
+
+function showHome() {
+  document.getElementById('hero').style.display = '';
+  document.querySelectorAll('.unit-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.nav-btn')[0].classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  currentUnit = null;
+}
+
+/* ── FADE-IN OBSERVER ── */
+function triggerFadeIns() {
+  const els = document.querySelectorAll('.fade-in:not(.visible)');
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+      });
+    }, { threshold: 0.1 });
+    els.forEach(el => observer.observe(el));
+  } else {
+    els.forEach(el => el.classList.add('visible'));
+  }
+}
+
+/* ── QUIZ LOGIC ── */
+const quizFeedback = {
+  '1': {
+    correct: "🎉 Nailed it! Age 999 is impossible → that's NOISE (a data error). Score of 98 is a real, valid number that's just far from the group → that's an OUTLIER. Two totally different beasts!",
+    wrong: "💡 Close, but think again: Noise means the data is <em>invalid/incorrect</em> (no one is 999 years old). An outlier is <em>valid but extreme</em> (someone CAN score 98, it's just unusual). Age 999 = Noise. Score 98 = Outlier."
+  },
+  '2': {
+    correct: "🎉 Spot on! iloc slicing is end-exclusive. <code>2:5</code> = rows 2,3,4 = 3 rows. <code>0:2</code> = cols 0,1 = 2 columns. Remember: iloc is like Python list slicing!",
+    wrong: "💡 Remember: <strong>iloc is end-exclusive</strong>, just like Python list slicing. <code>2:5</code> gives you indices 2, 3, 4 → that's 3 rows. <code>0:2</code> gives indices 0, 1 → that's 2 columns. Answer: 3 rows, 2 columns!"
+  },
+  '3': {
+    correct: "🎉 Exactly! <code>sns.pairplot(df)</code> generates a full grid of scatter plots for EVERY pair of variables, plus histograms on the diagonal. One line = your entire dataset's relationship map!",
+    wrong: "💡 <code>heatmap</code> needs a correlation matrix first. <code>regplot</code> is for ONE pair. <code>jointplot</code> is for ONE pair + distributions. Only <code>pairplot()</code> auto-plots ALL pairs in one go!"
+  },
+  '4': {
+    correct: "🎉 Perfect! The filter catches 95% of real spam = High Recall (catches most positives). But it also flags 40% of legit emails = Low Precision (lots of false alarms). High recall + low precision = the 'trigger-happy' model!",
+    wrong: "💡 Think of it this way: Recall = 'did we catch all the spam?' (95% = HIGH). Precision = 'when we flag something as spam, are we right?' (40% false alarms = LOW). It's catching a lot but crying wolf too often."
+  }
+};
+
+function checkQuiz(btn, isCorrect, quizNum) {
+  if (answeredQuizzes[quizNum]) return;
+  answeredQuizzes[quizNum] = true;
+
+  const container = btn.closest('.quiz-options');
+  const allBtns = container.querySelectorAll('.quiz-opt');
+  allBtns.forEach(b => { b.disabled = true; b.style.cursor = 'default'; });
+
+  const feedback = document.getElementById('qf-' + quizNum);
+  if (isCorrect) {
+    btn.classList.add('correct');
+    feedback.className = 'quiz-feedback correct';
+    feedback.innerHTML = quizFeedback[quizNum].correct;
+    totalScore += 25;
+    updateScoreDisplays();
+  } else {
+    btn.classList.add('wrong');
+    feedback.className = 'quiz-feedback wrong';
+    feedback.innerHTML = quizFeedback[quizNum].wrong;
+    // Highlight correct
+    allBtns.forEach(b => { if (b !== btn) { /* leave them */ } });
+  }
+  feedback.style.display = 'block';
+}
+
+function updateScoreDisplays() {
+  document.querySelectorAll('[id^="score-display"]').forEach(el => {
+    el.textContent = totalScore;
+  });
+}
+
+/* ── COPY CODE ── */
+function copyCode(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre');
+  const text = pre.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'copied!';
+    btn.style.color = 'var(--accent3)';
+    btn.style.borderColor = 'var(--accent3)';
+    setTimeout(() => { btn.textContent = 'copy'; btn.style.color = ''; btn.style.borderColor = ''; }, 2000);
+  });
+}
+
+/* ── INIT ── */
+document.addEventListener('DOMContentLoaded', () => {
+  triggerFadeIns();
+  // Initial nav state
+  document.querySelectorAll('.nav-btn')[0].classList.add('active');
+});
+</script>
+</body>
+</html>
